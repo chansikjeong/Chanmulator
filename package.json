@@ -1,0 +1,20 @@
+{
+  "name": "Chnamulator",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "license": "MIT",
+  "dependencies": {
+    "@prisma/client": "^5.22.0",
+    "cookie-parser": "^1.4.7",
+    "express": "^4.21.1",
+    "jsonwebtoken": "^9.0.2",
+    "prisma": "^5.22.0"
+  },
+  "scripts": {
+    "dev": "nodemon run app.js"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7"
+  }
+}

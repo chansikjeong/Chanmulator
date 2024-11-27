@@ -1,0 +1,74 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  userId   Int    @id @default(autoincrement()) @map("user_id")
+  username String @unique @map("username")
+  password String @map("password")
+
+  character Character[]
+
+  @@map("User")
+}
+
+model Character {
+  characterId   Int    @id @default(autoincrement()) @map("character_id")
+  characterName String @unique @map("character_name")
+  health        Int    @default(100) @map("health")
+  power         Int    @default(100) @map("power")
+  money         Int    @default(10000) @map("money")
+
+  user  User @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  userId Int
+
+  inventory Inventory[]
+  equipment  Equipment[]
+
+  @@map("Character")
+}
+
+model Inventory {
+  inventoryId String @id @default(uuid()) @map("inventory_id")
+
+  character  Character @relation(fields: [characterId], references: [characterId], onDelete: Cascade)
+  characterId Int        @map("character_id")
+
+  item Item @relation(fields:[itemCode], references:[itemCode], onUpdate: Cascade)
+  itemCode Int @map("item_code")
+  count Int @default(0) @map("count")
+  @@map("Inventory")
+}
+
+model Equipment {
+  equipmentId String    @id @default(uuid()) @map("equipment_id")
+
+  character  Character @relation(fields: [characterId], references: [characterId], onDelete: Cascade)
+  characterId Int        @map("character_id")
+
+  itemCode Int @map("item_code")
+
+  @@map("Equipment")
+}
+
+model Item {
+  itemCode  Int    @id @map("item_code")
+  itemName  String @unique @map("name")
+  itemStat  Json   @map("item_stat")
+  itemPrice Int    @map("item_price")
+
+  inventory Inventory[]
+
+  @@map("Item")
+}
