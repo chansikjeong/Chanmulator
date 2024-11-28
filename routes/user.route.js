@@ -2,34 +2,12 @@ import express from "express";
 import { prisma } from "../lib/prisma/index.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import userValid from "../validator/user.validator.js";
 
 const router = express.Router(); // express.Router()를 이용해 라우터를 생성합니다.
 
-//사용자 추가
-// router.post("/userpost", async (req, res, next) => {
-//   const { username, password } = req.body;
-
-//   const userid = await prisma.User.findFirst({
-//     where: { username: username },
-//   });
-//   if (userid) {
-//     return res.status(400).json({ errorMessage: "이미 존재하는 ID입니다." });
-//   }
-//   if (!username) {
-//     return res.status(409).json({ errorMessage: "ID를 다시 입력하십시오" });
-//   }
-//   console.log("아이디입니디" + username);
-
-//   const user = await prisma.User.create({
-//     //User 테이블
-//     data: {
-//       username,
-//       password,
-//     },
-//   });
-//   return res.status(201).json({ data: user });
-// });
-router.post("/signup", async (req, res, next) => {
+// 계정 생성 API
+router.post("/signup", userValid.signupValidation, async (req, res, next) => {
   try {
     let saltRounds = 10;
     const { username, password } = req.body;
@@ -48,7 +26,7 @@ router.post("/signup", async (req, res, next) => {
   }
 });
 
-//로그인
+//로그인 API
 router.post("/signin", async (req, res, next) => {
   try {
     const { username, password } = req.body;

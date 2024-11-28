@@ -3,7 +3,7 @@ import { prisma } from "../lib/prisma/index.js";
 
 const router = express.Router();
 
-// 아이템 생성 api
+// 아이템 생성 API
 router.post("/item", async (req, res, next) => {
   try {
     const { itemCode, itemName, itemStat, itemPrice } = req.body;
@@ -19,7 +19,7 @@ router.post("/item", async (req, res, next) => {
   }
 });
 
-// 아이템 수정 api
+// 아이템 수정 API
 router.patch("/item/:itemCode", async (req, res, next) => {
   try {
     //req 정보 받기
@@ -44,7 +44,7 @@ router.patch("/item/:itemCode", async (req, res, next) => {
   }
 });
 
-//아이템 조회 API
+//아이템 목록 조회 API
 router.get("/item", async (req, res, next) => {
   try {
     const items = await prisma.item.findMany({
