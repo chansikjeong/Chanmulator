@@ -3,7 +3,7 @@ import { prisma } from "../lib/prisma/index.js";
 
 export default async function (req, res, next) {
   try {
-    const { authorization } = req.header;
+    const { authorization } = req.headers;
     if (!authorization) throw new Error("토큰이 존재하지 않습니다.");
 
     const [tokenType, token] = authorization.split(" ");
@@ -11,23 +11,21 @@ export default async function (req, res, next) {
     if (tokenType !== "Bearer")
       throw new Error("토큰 타입이 일치하지 않습니다.");
 
-    const decodedToken = jwt.verify(token, "custom-secret-key");
+    const decodedToken = jwt.verify(token, "secretOrPrivateKey");
     const userId = decodedToken.userId;
 
     const user = await prisma.user.findFirst({
-      where: { userId: +userId },
+      where: { userId: +userId }, //+는 숫자형으로 주기 위해서
     });
     if (!user) {
-      res.clearCookie("authorization");
       throw new Error("토큰 사용자가 존재하지 않습니다.");
     }
 
-    req.user = user;
+    // 사용자 정보를 저장
+    req.body.user = user;
 
     next();
   } catch (error) {
-    res.clearCookie("authorization");
-
     switch (error.name) {
       case "TokenExpiredError":
         return res.status(401).json({ message: "토큰이 만료되었습니다." });
