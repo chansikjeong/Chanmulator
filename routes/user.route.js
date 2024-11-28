@@ -31,8 +31,9 @@ const router = express.Router(); // express.Router()를 이용해 라우터를 �
 // });
 router.post("/signup", async (req, res, next) => {
   try {
+    let saltRounds = 10;
     const { username, password } = req.body;
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     await prisma.user.create({
       data: {
@@ -51,7 +52,6 @@ router.post("/signup", async (req, res, next) => {
 router.post("/signin", async (req, res, next) => {
   try {
     const { username, password } = req.body;
-    let msg;
 
     const user = await prisma.user.findUnique({
       where: { username: username },
@@ -60,19 +60,15 @@ router.post("/signin", async (req, res, next) => {
     if (!user) throw new Error("없는 유저입니다");
 
     if (!(await bcrypt.compare(password, user.password))) {
-      msg = "비밀번호가 틀렸습니다.";
-      return res.status(401).json({ message: msg });
+      return res.status(401).json({ message: "비밀번호가 틀렸습니다." });
     }
 
-    const token = jwt.sign(
-      { userId: user.userId, username: username },
-      "secretOrPrivateKey",
-      { expiresIn: 10000 }
-    );
+    const token = jwt.sign({ userId: user.userId }, "secretOrPrivateKey", {
+      expiresIn: "1d",
+    });
     res.setHeader("authorization", "Bearer " + token);
 
-    msg = "로그인 하였습니다.";
-    return res.status(200).json({ message: msg });
+    return res.status(200).json({ message: "로그인 하였습니다." });
   } catch (err) {
     next(err);
   }
