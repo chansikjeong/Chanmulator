@@ -44,6 +44,42 @@ router.patch("/item/:itemCode", async (req, res, next) => {
   }
 });
 
-//아이템 조회 api
+//아이템 조회 API
+router.get("/item", async (req, res, next) => {
+  try {
+    const items = await prisma.item.findMany({
+      select: {
+        itemCode: true,
+        itemName: true,
+        itemPrice: true,
+      },
+    });
+
+    return res.status(200).json(items);
+  } catch (err) {
+    next(err);
+  }
+});
+
+//아이템 상세 조회 API
+router.get("/item/:itemCode", async (req, res, next) => {
+  try {
+    const { itemCode } = req.params;
+
+    const items = await prisma.item.findFirst({
+      where: { itemCode: +itemCode },
+      select: {
+        itemCode: true,
+        itemName: true,
+        itemStat: true,
+        itemPrice: true,
+      },
+    });
+
+    return res.status(200).json(items);
+  } catch (err) {
+    next(err);
+  }
+});
 
 export default router;
