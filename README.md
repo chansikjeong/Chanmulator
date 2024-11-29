@@ -17,4 +17,5 @@
 
 ##4. API 명세서
 ---
-추후 업로드(표를 못 만들었어요 ㅠㅠ)
+![image](https://github.com/user-attachments/assets/72be45e3-a14e-4a3d-ac72-1db157735c3b)
+
