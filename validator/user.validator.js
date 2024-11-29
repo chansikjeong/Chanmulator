@@ -3,6 +3,7 @@ import Joi from "joi";
 const signupSchema = Joi.object({
   username: Joi.string().alphanum().lowercase().min(4).max(12).required(),
   password: Joi.string().min(6).max(20).required(),
+  passwordCheck: Joi.string().valid(Joi.ref("password")).required(),
 });
 
 const userValidator = {
